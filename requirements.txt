@@ -1,0 +1,4 @@
+GoogleNews
+pandas
+jupyterlab
+ipykernel
