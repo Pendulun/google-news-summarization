@@ -1,4 +1,6 @@
+coverage
 GoogleNews
-pandas
-jupyterlab
 ipykernel
+pandas
+transformers
+scikit-learn
