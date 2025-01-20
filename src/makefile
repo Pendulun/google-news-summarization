@@ -7,3 +7,6 @@ test_samples:
 
 test_join:
 	python3 -m unittest tests.test_concat
+
+test_solve:
+	python3 -m unittest tests.test_solve
