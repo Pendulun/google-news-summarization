@@ -2,6 +2,9 @@ test:
 	coverage run -m unittest discover tests
 	coverage html -i
 
+test_dataset:
+	python3 -m unittest tests.test_dataset
+	
 test_samples:
 	python3 -m unittest tests.test_input
 

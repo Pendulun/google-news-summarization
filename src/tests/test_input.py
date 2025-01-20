@@ -5,11 +5,14 @@ from tests.src.clustered_sampling_mock import ClusteredSampleMock
 
 
 class TestRandomSample(TestCase):
-    def _get_headlines(self, n: int = 10):
+    def _get_headlines(self, n: int = 10) -> list[dict]:
         """
         Returns n headlines
         """
-        return [f"Headline {id}" for id in range(n)]
+        return [
+            {"title": f"Headline {id}", "media": f"Fonte {id}"}
+            for id in range(n)
+        ]
 
     def test_can_sample_percentage(self):
         headlines = self._get_headlines(10)
@@ -36,11 +39,14 @@ class TestRandomSample(TestCase):
 
 
 class TestClusteredSample(TestCase):
-    def _get_headlines(self, n: int = 10):
+    def _get_headlines(self, n: int = 10) -> list[dict]:
         """
         Returns n headlines
         """
-        return [f"Headline {id}" for id in range(n)]
+        return [
+            {"title": f"Headline {id}", "media": f"Fonte {id}"}
+            for id in range(n)
+        ]
 
     def test_sample_from_clusters(self):
         headlines = self._get_headlines(10)

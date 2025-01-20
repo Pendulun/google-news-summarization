@@ -9,22 +9,14 @@ from transformers import AutoTokenizer, AutoModel
 
 
 class HeadlinesDataset(Dataset):
-    def __init__(self, headlines: list[str]):
+    def __init__(self, headlines: list[dict]):
         self.headlines = np.array(headlines)
 
     def __len__(self):
         return len(self.headlines)
 
-    def __getitem__(self, idx) -> tuple[list[str], str]:
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-
-        data = self.headlines[idx]
-
-        if len(data) > 1:
-            return self.headlines[idx].tolist()
-        else:
-            return [data]
+    def __getitem__(self, idx) -> list[dict[str, str]]:
+        return self.headlines[idx]
 
 
 class ClusteredSample:
@@ -38,22 +30,12 @@ class ClusteredSample:
         cls.model = AutoModel.from_pretrained(model_name).to(cls.device)
 
     @classmethod
-    def get_embeddings_from_model(cls, data: list[str]):
-        encoded_data = cls.tokenizer(
-            data, padding=True, truncation=True, return_tensors="pt"
-        ).to(cls.device)
-        with torch.autocast(device_type=cls.device):
-            with torch.no_grad():
-                # Get the correspondent classification embedding from the head
-                embeddings = cls.model(**encoded_data)[0][:, 0]
-
-                norm_embeddings = torch.nn.functional.normalize(
-                    embeddings, p=1, dim=1
-                )
-                return norm_embeddings.to("cpu")
-
-    @classmethod
-    def clustered_sample(cls, headlines: list[str], batch_size: int = 32):
+    def clustered_sample(
+        cls, headlines: list[dict], batch_size: int = 32
+    ) -> list[dict]:
+        """
+        Clusters the headlines titles and sample one per cluster
+        """
         dataset = HeadlinesDataset(headlines)
         np_embs = cls.get_embeddings(dataset, batch_size)
         clustering = DBSCAN(eps=3, min_samples=2, n_jobs=-1).fit(np_embs)
@@ -65,9 +47,16 @@ class ClusteredSample:
 
     @classmethod
     def get_embeddings(cls, dataset, batch_size: int = 16) -> np.ndarray:
+        """
+        Returns the embeddings for the dataset
+        """
         embeddings = list()
         for i, batch in tqdm(
-            enumerate(DataLoader(dataset, batch_size=batch_size)),
+            enumerate(
+                DataLoader(
+                    dataset, batch_size=batch_size, collate_fn=lambda x: x
+                )
+            ),
             desc="Calc embeddings",
         ):
             embs = cls.get_embeddings_from_model(batch)
@@ -75,3 +64,25 @@ class ClusteredSample:
 
         np_embs = torch.cat(embeddings).numpy()
         return np_embs
+
+    @classmethod
+    def get_embeddings_from_model(cls, data: list[dict]):
+        """
+        Uses the class tokenizer and model to calculate the data
+        embeddings
+        """
+        encoded_data = cls.tokenizer(
+            [el["title"] for el in data],
+            padding=True,
+            truncation=True,
+            return_tensors="pt",
+        ).to(cls.device)
+        with torch.autocast(device_type=cls.device):
+            with torch.no_grad():
+                # Get the correspondent classification embedding from the head
+                embeddings = cls.model(**encoded_data)[0][:, 0]
+
+                norm_embeddings = torch.nn.functional.normalize(
+                    embeddings, p=1, dim=1
+                )
+                return norm_embeddings.to("cpu")
