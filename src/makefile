@@ -4,3 +4,6 @@ test:
 
 test_samples:
 	python3 -m unittest tests.test_input
+
+test_join:
+	python3 -m unittest tests.test_concat
