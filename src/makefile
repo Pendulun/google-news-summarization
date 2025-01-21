@@ -13,3 +13,6 @@ test_join:
 
 test_solve:
 	python3 -m unittest tests.test_solve
+
+test_pipeline:
+	python3 -m unittest tests.test_pipeline
