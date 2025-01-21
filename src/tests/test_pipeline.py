@@ -1,5 +1,6 @@
 from unittest import main, TestCase
-from pipeline import PipelineBuilder, SamplerTypes, JoinerTypes, SolverTypes
+from pipeline import SamplerTypes, JoinerTypes, SolverTypes
+from tests.src.pipeline_mock import PipelineBuilderMock
 
 
 class TestPipeline(TestCase):
@@ -7,7 +8,9 @@ class TestPipeline(TestCase):
         for sampler in SamplerTypes:
             for joiner in JoinerTypes:
                 for solver in SolverTypes:
-                    pipeline = PipelineBuilder.build(sampler, joiner, solver)
+                    pipeline = PipelineBuilderMock.build(
+                        sampler, joiner, solver
+                    )
                     pipe_repr = {
                         "sampler": sampler,
                         "joiner": joiner,
