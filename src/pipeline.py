@@ -76,25 +76,34 @@ class PipelineBuilder:
         cls, sampler: SamplerTypes, joiner: JoinerTypes, solver: SolverTypes
     ) -> Pipeline:
 
+        pipeline = Pipeline()
+        pipeline.sampler = Runner(cls.sampler_map()[sampler], sampler)
+        pipeline.joiner = Runner(cls.joiner_map()[joiner], joiner)
+        pipeline.solver = Runner(cls.solver_map()[solver], solver)
+        return pipeline
+
+    @classmethod
+    def sampler_map(cls) -> dict[SamplerTypes, Callable]:
         sampler_map = {
             SamplerTypes.RANDOM: sample,
             SamplerTypes.CLUSTER_SAMPLER: ClusteredSample,
             SamplerTypes.AS_IS: lambda x: x,
         }
+        return sampler_map
 
+    @classmethod
+    def joiner_map(cls) -> dict[SamplerTypes, Callable]:
         joiner_map = {
             JoinerTypes.AS_IS: join_headlines,
             JoinerTypes.WITH_SOURCE: join_headlines_with_source,
         }
+        return joiner_map
 
+    @classmethod
+    def solver_map(cls) -> dict[JoinerTypes, Callable]:
         solver_map = {
             SolverTypes.AS_IS: present_as_is,
             SolverTypes.LLM_SUMMARIZATION: present_as_is,
             SolverTypes.LLM_CHAT: present_as_is,
         }
-
-        pipeline = Pipeline()
-        pipeline.sampler = Runner(sampler_map[sampler], sampler)
-        pipeline.joiner = Runner(joiner_map[joiner], joiner)
-        pipeline.solver = Runner(solver_map[solver], solver)
-        return pipeline
+        return solver_map
