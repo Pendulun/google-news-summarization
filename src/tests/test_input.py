@@ -35,7 +35,7 @@ class TestClusteredSample(TestCase):
 
     def test_sample_from_clusters(self):
         headlines = get_headlines(10)
-        samples = ClusteredSampleMock.clustered_sample(headlines)
+        samples = ClusteredSampleMock()(headlines)
         self.assertTrue(len(samples) > 0 and len(samples) < len(headlines))
         for sample in samples:
             self.assertIn(sample, headlines)

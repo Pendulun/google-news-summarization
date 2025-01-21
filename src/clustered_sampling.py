@@ -29,15 +29,14 @@ class ClusteredSample:
         cls.tokenizer = AutoTokenizer.from_pretrained(model_name)
         cls.model = AutoModel.from_pretrained(model_name).to(cls.device)
 
-    @classmethod
-    def clustered_sample(
-        cls, headlines: list[dict], batch_size: int = 32
+    def __call__(
+        self, headlines: list[dict], batch_size: int = 32
     ) -> list[dict]:
         """
         Clusters the headlines titles and sample one per cluster
         """
         dataset = HeadlinesDataset(headlines)
-        np_embs = cls.get_embeddings(dataset, batch_size)
+        np_embs = self.get_embeddings(dataset, batch_size)
         clustering = DBSCAN(eps=3, min_samples=2, n_jobs=-1).fit(np_embs)
         sampled = list()
         for label in np.unique(clustering.labels_):

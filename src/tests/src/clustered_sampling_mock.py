@@ -5,9 +5,6 @@ from clustered_sampling import ClusteredSample
 
 
 class ClusteredSampleMock(ClusteredSample):
-    @classmethod
-    def set_model(cls, model_name: str):
-        pass
 
     @classmethod
     def get_embeddings_from_model(cls, data: list[dict]) -> np.ndarray:
