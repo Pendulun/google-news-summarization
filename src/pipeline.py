@@ -107,7 +107,7 @@ class PipelineBuilder:
     def sampler_map(cls) -> dict[SamplerTypes, Callable]:
         sampler_map = {
             SamplerTypes.RANDOM: sample,
-            SamplerTypes.CLUSTER_SAMPLER: ClusteredSample,
+            SamplerTypes.CLUSTER_SAMPLER: ClusteredSample(),
             SamplerTypes.AS_IS: lambda x: x,
         }
         return sampler_map
