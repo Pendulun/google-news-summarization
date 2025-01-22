@@ -5,7 +5,7 @@ from typing import Callable
 from src.clustered_sampling import ClusteredSample
 from src.joiner import join_headlines, join_headlines_with_source
 from src.sampling import sample
-from src.solvers import present_as_is
+from src.solvers import present_as_is, llm_summarization
 
 
 @dataclass
@@ -124,7 +124,7 @@ class PipelineBuilder:
     def solver_map(cls) -> dict[JoinerTypes, Callable]:
         solver_map = {
             SolverTypes.AS_IS: present_as_is,
-            SolverTypes.LLM_SUMMARIZATION: present_as_is,
+            SolverTypes.LLM_SUMMARIZATION: llm_summarization,
             SolverTypes.LLM_CHAT: present_as_is,
         }
         return solver_map
