@@ -29,13 +29,25 @@ def search(search_str: str) -> list[dict]:
     return results
 
 
+def summarize(
+    search_str: str,
+    sampler_type: SamplerTypes,
+    joiner_type: JoinerTypes,
+    solver_type: SolverTypes,
+    sampler_kwargs: dict = None,
+    joiner_kwargs: dict = None,
+    solver_kwargs: dict = None,
+) -> str:
+    results = search(search_str)
+    pipe = PipelineBuilder.build(sampler_type, joiner_type, solver_type)
+    return pipe.run(results, sampler_kwargs, joiner_kwargs, solver_kwargs)
+
+
 if __name__ == "__main__":
     args = config_argparser().parse_args()
-    results = search(args.search)
 
     sampler = SamplerTypes.RANDOM
     joiner = JoinerTypes.WITH_SOURCE
     solver = SolverTypes.AS_IS
-    pipe = PipelineBuilder.build(sampler, joiner, solver)
 
-    print(pipe.run(results))
+    print(summarize(args.search, sampler, joiner, solver))
