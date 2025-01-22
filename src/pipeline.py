@@ -2,10 +2,10 @@ from dataclasses import dataclass
 import enum
 from typing import Callable
 
-from clustered_sampling import ClusteredSample
-from joiner import join_headlines, join_headlines_with_source
-from sampling import sample
-from solvers import present_as_is
+from src.clustered_sampling import ClusteredSample
+from src.joiner import join_headlines, join_headlines_with_source
+from src.sampling import sample
+from src.solvers import present_as_is
 
 
 @dataclass
@@ -44,6 +44,15 @@ class Pipeline:
         joiner_kwargs: dict = None,
         solver_kwargs: dict = None,
     ):
+        if sampler_kwargs is None:
+            sampler_kwargs = dict()
+
+        if joiner_kwargs is None:
+            joiner_kwargs = dict()
+
+        if solver_kwargs is None:
+            solver_kwargs = dict()
+
         sampled = self._sampler.callable_func(headlines, **sampler_kwargs)
         joined = self._joiner.callable_func(sampled, **joiner_kwargs)
         solved = self._solver.callable_func(joined, **solver_kwargs)
