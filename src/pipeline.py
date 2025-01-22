@@ -37,6 +37,18 @@ class Pipeline:
         self._joiner: Runner = None
         self._solver: Runner = None
 
+    def run(
+        self,
+        headlines: list[dict],
+        sampler_kwargs: dict = None,
+        joiner_kwargs: dict = None,
+        solver_kwargs: dict = None,
+    ):
+        sampled = self._sampler.callable_func(headlines, **sampler_kwargs)
+        joined = self._joiner.callable_func(sampled, **joiner_kwargs)
+        solved = self._solver.callable_func(joined, **solver_kwargs)
+        return solved
+
     @property
     def sampler(self) -> Runner:
         return self._sampler
