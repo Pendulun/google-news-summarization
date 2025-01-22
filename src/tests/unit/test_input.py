@@ -1,8 +1,8 @@
 from unittest import main, TestCase
 
-from sampling import sample
-from tests.src.clustered_sampling_mock import ClusteredSampleMock
-from tests.src.utils import get_headlines
+from src.sampling import sample
+from src.tests.src.clustered_sampling_mock import ClusteredSampleMock
+from src.tests.src.utils import get_headlines
 
 
 class TestRandomSample(TestCase):

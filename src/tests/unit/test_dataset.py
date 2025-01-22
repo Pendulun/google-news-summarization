@@ -1,8 +1,8 @@
 import numpy as np
 from unittest import main, TestCase
 
-from clustered_sampling import HeadlinesDataset
-from tests.src.utils import get_headlines
+from src.clustered_sampling import HeadlinesDataset
+from src.tests.src.utils import get_headlines
 
 
 class TestHeadlinesDataset(TestCase):

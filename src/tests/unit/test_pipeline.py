@@ -1,6 +1,6 @@
 from unittest import main, TestCase
-from pipeline import SamplerTypes, JoinerTypes, SolverTypes
-from tests.src.pipeline_mock import PipelineBuilderMock
+from src.pipeline import SamplerTypes, JoinerTypes, SolverTypes
+from src.tests.src.pipeline_mock import PipelineBuilderMock
 
 
 class TestPipeline(TestCase):

@@ -1,7 +1,7 @@
 from typing import Callable
-from pipeline import PipelineBuilder, SamplerTypes
-from sampling import sample
-from tests.src.clustered_sampling_mock import ClusteredSampleMock
+from src.pipeline import PipelineBuilder, SamplerTypes
+from src.sampling import sample
+from src.tests.src.clustered_sampling_mock import ClusteredSampleMock
 
 
 class PipelineBuilderMock(PipelineBuilder):

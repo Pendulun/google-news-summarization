@@ -1,7 +1,7 @@
 from unittest import main, TestCase
-from joiner import join_headlines, join_headlines_with_source
+from src.joiner import join_headlines, join_headlines_with_source
 
-from tests.src.utils import get_headlines
+from src.tests.src.utils import get_headlines
 
 
 class TestHeadlinesJoin(TestCase):

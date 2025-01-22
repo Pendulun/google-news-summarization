@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from clustered_sampling import ClusteredSample
+from src.clustered_sampling import ClusteredSample
 
 
 class ClusteredSampleMock(ClusteredSample):
