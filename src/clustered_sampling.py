@@ -43,20 +43,38 @@ class ClusteredSample:
             cluster_kwargs = {"eps": 0.3, "min_samples": 2}
         self.set_model(model_name)
         dataset = HeadlinesDataset(headlines)
-        cluster_labels = self._get_clustering_labels(
-            batch_size, cluster_kwargs, dataset
-        )
+        np_embs = self.get_embeddings(dataset, batch_size)
+        cluster_labels = self._get_clustering_labels(np_embs, cluster_kwargs)
         sampled = list()
         for label in np.unique(cluster_labels):
-            cluster_data = dataset[np.where(cluster_labels == label)]
-            sampled.append(random.choice(cluster_data))
+            representative = self._get_most_representative_member(
+                dataset, np_embs, cluster_labels, label
+            )
+            sampled.append(representative)
         return sampled
 
+    def _get_most_representative_member(
+        self,
+        dataset: HeadlinesDataset,
+        np_embs: np.ndarray,
+        cluster_labels: np.ndarray,
+        label: int,
+    ):
+        """
+        Return the cluster label member with the closest embedding
+         to the mean embedding
+        """
+        cluster_data = dataset[np.where(cluster_labels == label)]
+        cluster_embs = np_embs[np.where(cluster_labels == label)]
+        mean_emb = cluster_embs.mean(axis=0)
+        distances = np.linalg.norm(cluster_embs - mean_emb, axis=1)
+        representative = cluster_data[np.argsort(distances)[0]]
+        return representative
+
     def _get_clustering_labels(
-        self, batch_size: int, cluster_kwargs: dict, dataset: HeadlinesDataset
+        self, data: np.ndarray, cluster_kwargs: dict
     ) -> np.ndarray:
-        np_embs = self.get_embeddings(dataset, batch_size)
-        clustering = DBSCAN(n_jobs=-1, **cluster_kwargs).fit(np_embs)
+        clustering = DBSCAN(n_jobs=-1, **cluster_kwargs).fit(data)
         return clustering.labels_
 
     @classmethod
