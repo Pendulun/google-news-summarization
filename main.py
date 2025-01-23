@@ -1,7 +1,7 @@
 import argparse
-from GoogleNews import GoogleNews
 
 from src.pipeline import PipelineBuilder, JoinerTypes, SamplerTypes, SolverTypes
+from src.search import search
 
 
 def config_argparser() -> argparse.ArgumentParser:
@@ -14,19 +14,6 @@ def config_argparser() -> argparse.ArgumentParser:
         help="What to search for in Google News",
     )
     return parser
-
-
-def search(search_str: str) -> list[dict]:
-    googlenews = GoogleNews(lang="pt", region="BR", period="1d", encode="utf-8")
-    print("Google News API version:", googlenews.getVersion())
-    googlenews.enableException(True)
-    googlenews.clear()
-    googlenews.get_news(search_str)
-    results = [
-        {"title": result["title"], "media": result["media"]}
-        for result in googlenews.results()
-    ]
-    return results
 
 
 def summarize(
