@@ -30,15 +30,21 @@ class ClusteredSample:
         cls.model = AutoModel.from_pretrained(model_name).to(cls.device)
 
     def __call__(
-        self, headlines: list[dict], model_name: str, batch_size: int = 32
+        self,
+        headlines: list[dict],
+        model_name: str,
+        batch_size: int = 32,
+        cluster_kwargs: dict = None,
     ) -> list[dict]:
         """
         Clusters the headlines titles and sample one per cluster
         """
+        if cluster_kwargs is None:
+            cluster_kwargs = {"eps": 3, "min_samples": 2}
         self.set_model(model_name)
         dataset = HeadlinesDataset(headlines)
         np_embs = self.get_embeddings(dataset, batch_size)
-        clustering = DBSCAN(eps=3, min_samples=2, n_jobs=-1).fit(np_embs)
+        clustering = DBSCAN(n_jobs=-1, **cluster_kwargs).fit(np_embs)
         sampled = list()
         for label in np.unique(clustering.labels_):
             cluster_data = dataset[np.where(clustering.labels_ == label)]
