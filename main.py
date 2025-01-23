@@ -11,6 +11,7 @@ def config_argparser() -> argparse.ArgumentParser:
         "--search",
         type=str,
         required=False,
+        default=None,
         help="What to search for in Google News",
     )
 
@@ -18,6 +19,7 @@ def config_argparser() -> argparse.ArgumentParser:
         "--data_path",
         type=str,
         required=False,
+        default=None,
         help="The path to a csv file with two columns ('title' and 'media') to proccess",
     )
 
