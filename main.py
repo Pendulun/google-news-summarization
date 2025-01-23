@@ -34,8 +34,28 @@ def search_and_summarize(
     solver_kwargs: dict = None,
 ) -> str:
     results = search(search_str)
+    return summarize(
+        results,
+        sampler_type,
+        joiner_type,
+        solver_type,
+        sampler_kwargs,
+        joiner_kwargs,
+        solver_kwargs,
+    )
+
+
+def summarize(
+    headlines: list[dict],
+    sampler_type: SamplerTypes,
+    joiner_type: JoinerTypes,
+    solver_type: SolverTypes,
+    sampler_kwargs: dict = None,
+    joiner_kwargs: dict = None,
+    solver_kwargs: dict = None,
+) -> str:
     pipe = PipelineBuilder.build(sampler_type, joiner_type, solver_type)
-    return pipe.run(results, sampler_kwargs, joiner_kwargs, solver_kwargs)
+    return pipe.run(headlines, sampler_kwargs, joiner_kwargs, solver_kwargs)
 
 
 if __name__ == "__main__":
