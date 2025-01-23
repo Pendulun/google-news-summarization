@@ -24,7 +24,7 @@ def config_argparser() -> argparse.ArgumentParser:
     return parser
 
 
-def summarize(
+def search_and_summarize(
     search_str: str,
     sampler_type: SamplerTypes,
     joiner_type: JoinerTypes,
@@ -45,4 +45,4 @@ if __name__ == "__main__":
     joiner = JoinerTypes.WITH_SOURCE
     solver = SolverTypes.AS_IS
 
-    print(summarize(args.search, sampler, joiner, solver))
+    print(search_and_summarize(args.search, sampler, joiner, solver))
