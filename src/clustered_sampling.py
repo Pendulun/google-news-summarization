@@ -43,13 +43,21 @@ class ClusteredSample:
             cluster_kwargs = {"eps": 3, "min_samples": 2}
         self.set_model(model_name)
         dataset = HeadlinesDataset(headlines)
-        np_embs = self.get_embeddings(dataset, batch_size)
-        clustering = DBSCAN(n_jobs=-1, **cluster_kwargs).fit(np_embs)
+        cluster_labels = self._get_clustering_labels(
+            batch_size, cluster_kwargs, dataset
+        )
         sampled = list()
-        for label in np.unique(clustering.labels_):
-            cluster_data = dataset[np.where(clustering.labels_ == label)]
+        for label in np.unique(cluster_labels):
+            cluster_data = dataset[np.where(cluster_labels == label)]
             sampled.append(random.choice(cluster_data))
         return sampled
+
+    def _get_clustering_labels(
+        self, batch_size: int, cluster_kwargs: dict, dataset: HeadlinesDataset
+    ) -> np.ndarray:
+        np_embs = self.get_embeddings(dataset, batch_size)
+        clustering = DBSCAN(n_jobs=-1, **cluster_kwargs).fit(np_embs)
+        return clustering.labels_
 
     @classmethod
     def get_embeddings(cls, dataset, batch_size: int = 16) -> np.ndarray:
