@@ -40,7 +40,7 @@ class ClusteredSample:
         Clusters the headlines titles and sample one per cluster
         """
         if cluster_kwargs is None:
-            cluster_kwargs = {"eps": 3, "min_samples": 2}
+            cluster_kwargs = {"eps": 0.3, "min_samples": 2}
         self.set_model(model_name)
         dataset = HeadlinesDataset(headlines)
         cluster_labels = self._get_clustering_labels(
