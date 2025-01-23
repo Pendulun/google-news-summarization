@@ -7,7 +7,6 @@ def search(search_str: str) -> list[dict]:
     with the news title and link.
     """
     googlenews = GoogleNews(lang="pt", region="BR", period="1d", encode="utf-8")
-    print("Google News API version:", googlenews.getVersion())
     googlenews.enableException(True)
     googlenews.clear()
     googlenews.get_news(search_str)
