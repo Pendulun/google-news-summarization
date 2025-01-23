@@ -10,9 +10,17 @@ def config_argparser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--search",
         type=str,
-        required=True,
+        required=False,
         help="What to search for in Google News",
     )
+
+    parser.add_argument(
+        "--data_path",
+        type=str,
+        required=False,
+        help="The path to a csv file with two columns ('title' and 'media') to proccess",
+    )
+
     return parser
 
 
