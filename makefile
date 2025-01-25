@@ -20,3 +20,6 @@ test_solve:
 
 test_pipeline:
 	python3 -m unittest src.tests.unit.test_pipeline
+
+test_ranker:
+	python3 -m unittest src.tests.unit.test_ranker
