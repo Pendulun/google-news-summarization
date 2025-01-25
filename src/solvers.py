@@ -26,4 +26,4 @@ def llm_summarization(
         model_kwargs=model_kwargs,
     )
 
-    return summarizer(text, **pipe_kwargs)
+    return summarizer(text, **pipe_kwargs)[0]["summary_text"]
