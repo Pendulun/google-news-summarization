@@ -101,7 +101,7 @@ def save_mean_rankings_plot(data_dir: str, target_plot_path: str):
 
     _define_plot_configs(
         suptitle="Configs mean rankings per term",
-        xlabels=mean_rankings_df.columns.to_list(),
+        xlabels=mean_rankings_df.index.to_list(),
     )
 
     plt.savefig(pathlib.Path(target_plot_path))
