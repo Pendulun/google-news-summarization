@@ -44,15 +44,13 @@ def plot_each_person_results(data_dir: str, save_to_dir: str):
         plt.figure(figsize=(12, 5))
         df.T.plot(ax=plt.gca(), marker="o")
 
-        _define_plot_configs(
-            title=file.stem, df=df, xlabels=df.columns.to_list()
-        )
+        _define_plot_configs(suptitle=file.stem, xlabels=df.columns.to_list())
 
         plt.savefig(target_dir_path / f"{file.stem}.png")
         plt.close()
 
 
-def _define_plot_configs(title, df, xlabels):
+def _define_plot_configs(suptitle, xlabels):
     plt.xticks(range(len(xlabels)), xlabels, rotation=40)
     y_ticks = [0, 1, 2, 3, 4]
     plt.yticks(y_ticks, [el + 1 for el in y_ticks])
@@ -61,7 +59,7 @@ def _define_plot_configs(title, df, xlabels):
     plt.gca().invert_yaxis()
 
     plt.legend(loc="upper left", ncol=len(plt.gca().lines))
-    plt.title(title)
+    plt.suptitle(suptitle)
     plt.tight_layout()
 
 
@@ -102,8 +100,7 @@ def save_mean_rankings_plot(data_dir: str, target_plot_path: str):
     mean_rankings_df.plot(ax=plt.gca(), marker="o")
 
     _define_plot_configs(
-        title="Configs mean rankings per term",
-        df=mean_rankings_df,
+        suptitle="Configs mean rankings per term",
         xlabels=mean_rankings_df.columns.to_list(),
     )
 
@@ -112,7 +109,7 @@ def save_mean_rankings_plot(data_dir: str, target_plot_path: str):
 
 
 def highlight_mean_performance(
-    data_dir: str, target_plot_path: str, highlight: list[str]
+    data_dir: str, target_plot_path: str, highlight: list[str], title=None
 ):
     data_dir_path = pathlib.Path(data_dir)
 
@@ -142,10 +139,11 @@ def highlight_mean_performance(
         plt.plot(xrange, mean_rankings_df[col].values, marker="o", label=col)
 
     _define_plot_configs(
-        title="Configs mean rankings per term",
-        df=mean_rankings_df,
+        suptitle="Configs mean rankings per term",
         xlabels=mean_rankings_df.index.to_list(),
     )
+
+    plt.title(title, loc="left", fontsize=10)
 
     plt.savefig(target_plot_path)
     plt.close()
@@ -174,6 +172,7 @@ if __name__ == "__main__":
         rankings_data_dir,
         highlist_mean_rankings_plot_path,
         ["Cluster_Source", "Source_Summ"],
+        title="Clustering was found to be prefered over summarizing",
     )
 
     highlist_mean_rankings_plot_path = (
@@ -187,4 +186,5 @@ if __name__ == "__main__":
         rankings_data_dir,
         highlist_mean_rankings_plot_path,
         ["Cluster_Source_Summ"],
+        title="Clustering and summarizing was one of the least prefered configurations",
     )
