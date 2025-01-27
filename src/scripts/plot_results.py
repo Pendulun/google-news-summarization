@@ -44,20 +44,25 @@ def plot_each_person_results(data_dir: str, save_to_dir: str):
         plt.figure(figsize=(12, 5))
         df.T.plot(ax=plt.gca(), marker="o")
 
-        x_labels = df.columns.to_list()
-        plt.xticks(range(len(x_labels)), x_labels, rotation=40)
-        y_ticks = [0, 1, 2, 3, 4]
-        plt.yticks(y_ticks, [el + 1 for el in y_ticks])
-        plt.ylim((-1, len(y_ticks)))
-        plt.ylabel("Ranking")
-        plt.gca().invert_yaxis()
-
-        plt.legend(loc="upper left", ncol=len(plt.gca().lines))
-        plt.title(file.stem)
-        plt.tight_layout()
+        _define_plot_configs(
+            title=file.stem, df=df, xlabels=df.columns.to_list()
+        )
 
         plt.savefig(target_dir_path / f"{file.stem}.png")
         plt.close()
+
+
+def _define_plot_configs(title, df, xlabels):
+    plt.xticks(range(len(xlabels)), xlabels, rotation=40)
+    y_ticks = [0, 1, 2, 3, 4]
+    plt.yticks(y_ticks, [el + 1 for el in y_ticks])
+    plt.ylim((-1, len(y_ticks)))
+    plt.ylabel("Ranking")
+    plt.gca().invert_yaxis()
+
+    plt.legend(loc="upper left", ncol=len(plt.gca().lines))
+    plt.title(title)
+    plt.tight_layout()
 
 
 def get_configs_mean_rankings(data_dir: str) -> dict[dict[str, float]]:
@@ -96,21 +101,53 @@ def save_mean_rankings_plot(data_dir: str, target_plot_path: str):
     plt.figure(figsize=(12, 5))
     mean_rankings_df.plot(ax=plt.gca(), marker="o")
 
-    x_labels = mean_rankings_df.index.to_list()
-    plt.xticks(range(len(x_labels)), x_labels, rotation=40)
-
-    y_ticks = [1, 2, 3, 4, 5]
-    plt.yticks(y_ticks, [el for el in y_ticks])
-    plt.ylim((0, len(y_ticks) + 1))
-
-    plt.ylabel("Mean Ranking")
-    plt.gca().invert_yaxis()
-
-    plt.legend(loc="upper left", ncol=len(plt.gca().lines))
-    plt.title("Configs mean rankings per term")
-    plt.tight_layout()
+    _define_plot_configs(
+        title="Configs mean rankings per term",
+        df=mean_rankings_df,
+        xlabels=mean_rankings_df.columns.to_list(),
+    )
 
     plt.savefig(pathlib.Path(target_plot_path))
+    plt.close()
+
+
+def highlight_mean_performance(
+    data_dir: str, target_plot_path: str, highlight: list[str]
+):
+    data_dir_path = pathlib.Path(data_dir)
+
+    config_term_mean_rankings = get_configs_mean_rankings(data_dir_path)
+
+    mean_rankings_df = pd.DataFrame(config_term_mean_rankings)
+    mean_rankings_df = mean_rankings_df.loc[cols_ordering]
+
+    plt.figure(figsize=(12, 5))
+
+    xrange = list(range(len(mean_rankings_df.index.to_list())))
+    not_highlight_color = "lightgray"
+    for col in mean_rankings_df.columns:
+        if col in highlight:
+            continue
+
+        plt.plot(
+            xrange,
+            mean_rankings_df[col].values,
+            marker="o",
+            c=not_highlight_color,
+            label=col,
+        )
+
+    # So the highlighted columns are plotted last
+    for col in highlight:
+        plt.plot(xrange, mean_rankings_df[col].values, marker="o", label=col)
+
+    _define_plot_configs(
+        title="Configs mean rankings per term",
+        df=mean_rankings_df,
+        xlabels=mean_rankings_df.index.to_list(),
+    )
+
+    plt.savefig(target_plot_path)
     plt.close()
 
 
@@ -125,3 +162,29 @@ if __name__ == "__main__":
     mean_rankings_plot_path = data_dir / "assets/rankings/mean_rankings.png"
     print("[LOG] Plotting mean rankings to", mean_rankings_plot_path.resolve())
     save_mean_rankings_plot(rankings_data_dir, mean_rankings_plot_path)
+
+    highlist_mean_rankings_plot_path = (
+        data_dir / "assets/rankings/cluster_vs_summ_rankings.png"
+    )
+    print(
+        "[LOG] Plotting highlighted mean rankings to",
+        highlist_mean_rankings_plot_path.resolve(),
+    )
+    highlight_mean_performance(
+        rankings_data_dir,
+        highlist_mean_rankings_plot_path,
+        ["Cluster_Source", "Source_Summ"],
+    )
+
+    highlist_mean_rankings_plot_path = (
+        data_dir / "assets/rankings/cluster_source_summ.png"
+    )
+    print(
+        "[LOG] Plotting highlighted mean rankings to",
+        highlist_mean_rankings_plot_path.resolve(),
+    )
+    highlight_mean_performance(
+        rankings_data_dir,
+        highlist_mean_rankings_plot_path,
+        ["Cluster_Source_Summ"],
+    )
